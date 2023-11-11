@@ -33,5 +33,5 @@ func TokenProccesing(token string, sign string) (*models.Claim, bool, string, er
 		return &claims, false, string(""), errors.New("Invalid token")
 	}
 
-	return &claims, false, string(""), err
+	return &claims, true, string(""), err
 }

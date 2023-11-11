@@ -5,7 +5,9 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/fabiolaguna/twitter-go/configurations/jwt"
 	"github.com/fabiolaguna/twitter-go/models"
+	"github.com/fabiolaguna/twitter-go/services"
 )
 
 func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest) models.Response {
@@ -13,10 +15,19 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 
 	var response models.Response
 
+	isValid, statusCode, msg, _ := authorization(ctx, request)
+
+	if !isValid {
+		response.Status = statusCode
+		response.Message = msg
+		return response
+	}
+
 	switch ctx.Value(models.Key("method")).(string) {
 	case "POST":
 		switch ctx.Value(models.Key("path")).(string) {
-
+		case "register":
+			return services.Create(ctx)
 		}
 		//
 	case "GET":
@@ -39,4 +50,32 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 	response.Status = 404
 	response.Message = "the requested url was not found"
 	return response
+}
+
+func authorization(ctx context.Context, request events.APIGatewayProxyRequest) (bool, int, string, models.Claim) {
+	path := ctx.Value(models.Key("path")).(string)
+
+	if path == "create" || path == "login" || path == "avatar" || path == "banner" {
+		return true, 200, "", models.Claim{}
+	}
+
+	token := request.Headers["Authorization"]
+
+	if len(token) == 0 {
+		return false, 401, "Token is required", models.Claim{}
+	}
+
+	claim, isOk, msg, err := jwt.TokenProccesing(token, ctx.Value(models.Key("jwtSign")).(string))
+	if !isOk {
+		if err != nil {
+			fmt.Println("Error in token " + err.Error())
+			return false, 401, err.Error(), models.Claim{}
+		} else {
+			fmt.Println("Error in token " + msg)
+			return false, 401, msg, models.Claim{}
+		}
+	}
+
+	fmt.Println("Token is valid")
+	return true, 200, msg, *claim
 }
