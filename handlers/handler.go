@@ -6,8 +6,8 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/fabiolaguna/twitter-go/configurations/jwt"
+	"github.com/fabiolaguna/twitter-go/controllers"
 	"github.com/fabiolaguna/twitter-go/models"
-	"github.com/fabiolaguna/twitter-go/services"
 )
 
 func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest) models.Response {
@@ -27,7 +27,7 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 	case "POST":
 		switch ctx.Value(models.Key("path")).(string) {
 		case "register":
-			return services.Create(ctx)
+			return controllers.Create(ctx)
 		}
 		//
 	case "GET":
@@ -55,7 +55,7 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 func authorization(ctx context.Context, request events.APIGatewayProxyRequest) (bool, int, string, models.Claim) {
 	path := ctx.Value(models.Key("path")).(string)
 
-	if path == "create" || path == "login" || path == "avatar" || path == "banner" {
+	if path == "register" || path == "login" || path == "avatar" || path == "banner" {
 		return true, 200, "", models.Claim{}
 	}
 
