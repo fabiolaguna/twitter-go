@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fabiolaguna/twitter-go/dao"
 	"github.com/fabiolaguna/twitter-go/models"
 	jwt "github.com/golang-jwt/jwt/v5"
 )
@@ -26,7 +27,12 @@ func TokenProccesing(token string, sign string) (*models.Claim, bool, string, er
 		return key, nil
 	})
 	if err == nil {
-		// Chequeo contra DB
+		_, founded, _ := dao.UserRegisteredCheck(claims.Email)
+		if founded {
+			Email = claims.Email
+			UserId = claims.Id.Hex()
+		}
+		return &claims, founded, UserId, nil
 	}
 
 	if !tokenParsed.Valid {
