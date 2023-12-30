@@ -34,7 +34,8 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 		//
 	case "GET":
 		switch ctx.Value(models.Key("path")).(string) {
-
+		case "profile":
+			return controllers.Profile(request)
 		}
 		//
 	case "PUT":

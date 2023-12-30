@@ -68,3 +68,24 @@ func Login(email string, password string) (models.User, bool) {
 
 	return user, true
 }
+
+func Profile(id string) (models.User, error) {
+	ctx := context.TODO()
+	db := configurations.MongoConnection.Database(configurations.DatabaseName)
+	col := db.Collection("users")
+
+	var profile models.User
+	objectId, _ := primitive.ObjectIDFromHex(id)
+
+	condition := bson.M{
+		"_id": objectId,
+	}
+
+	err := col.FindOne(ctx, condition).Decode(&profile)
+	profile.Password = ""
+	if err != nil {
+		return profile, err
+	}
+
+	return profile, nil
+}
