@@ -51,3 +51,20 @@ func encryptPassword(pass string) (string, error) {
 
 	return string(bytes), nil
 }
+
+func Login(email string, password string) (models.User, bool) {
+	user, exists, _ := UserRegisteredCheck(email)
+	if !exists {
+		return user, false
+	}
+
+	passwordBytes := []byte(password)
+	passwordDb := []byte(user.Password)
+
+	err := bcrypt.CompareHashAndPassword(passwordDb, passwordBytes)
+	if err != nil {
+		return user, false
+	}
+
+	return user, true
+}
