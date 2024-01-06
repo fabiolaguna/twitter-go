@@ -133,34 +133,3 @@ func Login(ctx context.Context) models.Response {
 
 	return response
 }
-
-func Profile(request events.APIGatewayProxyRequest) models.Response {
-	var response models.Response
-	response.Status = 400
-
-	id := request.QueryStringParameters["id"]
-	if len(id) < 1 {
-		response.Message = "Id param is required"
-		fmt.Println("[user service][method:Profile] " + response.Message)
-		return response
-	}
-
-	profile, err := dao.Profile(id)
-	if err != nil {
-		response.Message = err.Error()
-		fmt.Println("[user service][method:Profile] Profile not found: " + response.Message)
-		return response
-	}
-
-	jsonResponse, err := json.Marshal(profile)
-	if err != nil {
-		response.Status = 500
-		response.Message = err.Error()
-		fmt.Println("[user service][method:Profile] Error formatting token: " + response.Message)
-		return response
-	}
-
-	response.Status = 200
-	response.Message = string(jsonResponse)
-	return response
-}

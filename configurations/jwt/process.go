@@ -18,7 +18,7 @@ func TokenProccesing(token string, sign string) (*models.Claim, bool, string, er
 
 	splitToken := strings.Split(token, "Bearer")
 	if len(splitToken) != 2 {
-		return &claims, false, "", errors.New("Invalid token format")
+		return &claims, false, string(""), errors.New("Invalid token format")
 	}
 
 	token = strings.TrimSpace(splitToken[1])

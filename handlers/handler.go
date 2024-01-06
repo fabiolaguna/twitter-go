@@ -15,7 +15,7 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 
 	var response models.Response
 
-	isValid, statusCode, msg, _ := authorization(ctx, request)
+	isValid, statusCode, msg, claim := authorization(ctx, request)
 
 	if !isValid {
 		response.Status = statusCode
@@ -35,12 +35,13 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 	case "GET":
 		switch ctx.Value(models.Key("path")).(string) {
 		case "profile":
-			return controllers.Profile(request)
+			return controllers.GetProfile(request)
 		}
 		//
 	case "PUT":
 		switch ctx.Value(models.Key("path")).(string) {
-
+		case "profile":
+			return controllers.UpdateProfile(ctx, claim)
 		}
 		//
 	case "DELETE":
