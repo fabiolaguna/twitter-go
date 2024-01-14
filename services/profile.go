@@ -28,6 +28,10 @@ func GetProfile(request events.APIGatewayProxyRequest) models.Response {
 		return response
 	}
 
+	// Agregar validacion para saber si el token pertenece al user, porque sino va a servir para cualquiera.
+	// Se puede traer el claim aca, y comparar el email con el del atributo profile
+	// Si son diferentes, quiere decir que el token no pertenece al userId enviado como query param
+
 	jsonResponse, err := json.Marshal(profile)
 	if err != nil {
 		response.Status = 500

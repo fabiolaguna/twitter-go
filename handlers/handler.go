@@ -30,6 +30,8 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 			return controllers.Create(ctx)
 		case "login":
 			return controllers.Login(ctx)
+		case "tweet":
+			return controllers.CreateTweet(ctx, claim)
 		}
 		//
 	case "GET":
