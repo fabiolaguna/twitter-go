@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/fabiolaguna/twitter-go/dao"
 	"github.com/fabiolaguna/twitter-go/models"
 )
@@ -47,5 +49,50 @@ func CreateTweet(ctx context.Context, claim models.Claim) models.Response {
 
 	response.Status = 200
 	response.Message = "Tweet created successfully"
+	return response
+}
+
+func GetTweets(request events.APIGatewayProxyRequest) models.Response {
+	var response models.Response
+	response.Status = 400
+
+	id := request.QueryStringParameters["id"]
+	page := request.QueryStringParameters["page"]
+
+	if len(id) < 1 {
+		response.Message = "Id param is required"
+		fmt.Println("[tweet service][method:GetTweets] " + response.Message)
+		return response
+	}
+
+	if len(page) < 1 {
+		page = "1"
+	}
+
+	convertedPage, err := strconv.Atoi(page)
+	if err != nil {
+		response.Message = "Incorrect page param. Must be greater than 0"
+		fmt.Println("[tweet service][method:GetTweets] " + response.Message)
+		return response
+	}
+
+	tweets, isOk := dao.GetTweets(id, int64(convertedPage))
+	if !isOk {
+		response.Status = 500
+		response.Message = "Error reading tweets"
+		fmt.Println("[tweet service][method:GetTweets] " + response.Message)
+		return response
+	}
+
+	jsonResponse, err := json.Marshal(tweets)
+	if err != nil {
+		response.Status = 500
+		response.Message = "Error formatting json response"
+		fmt.Println("[tweet service][method:GetTweets] " + response.Message)
+		return response
+	}
+
+	response.Status = 200
+	response.Message = string(jsonResponse)
 	return response
 }
