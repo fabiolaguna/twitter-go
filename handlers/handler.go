@@ -33,7 +33,6 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 		case "tweet":
 			return controllers.CreateTweet(ctx, claim)
 		}
-		//
 	case "GET":
 		switch ctx.Value(models.Key("path")).(string) {
 		case "profile":
@@ -41,7 +40,6 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 		case "tweets":
 			return controllers.GetTweets(request)
 		}
-		//
 	case "PUT":
 		switch ctx.Value(models.Key("path")).(string) {
 		case "profile":
@@ -50,9 +48,9 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 		//
 	case "DELETE":
 		switch ctx.Value(models.Key("path")).(string) {
-
+		case "tweet":
+			return controllers.DeleteTweet(request, claim)
 		}
-		//
 	}
 
 	response.Status = 404

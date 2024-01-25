@@ -96,3 +96,27 @@ func GetTweets(request events.APIGatewayProxyRequest) models.Response {
 	response.Message = string(jsonResponse)
 	return response
 }
+
+func DeleteTweet(request events.APIGatewayProxyRequest, claim models.Claim) models.Response {
+	var response models.Response
+	response.Status = 400
+
+	id := request.QueryStringParameters["id"]
+	if len(id) < 1 {
+		response.Message = "Id param is required"
+		fmt.Println("[tweet service][method:DeleteTweet] " + response.Message)
+		return response
+	}
+
+	err := dao.DeleteTweet(id, claim.Id.Hex())
+	if err != nil {
+		response.Status = 500
+		response.Message = "[tweet service][method:DeleteTweet] Error has occurred deleting tweet: " + err.Error()
+		fmt.Println(response.Message)
+		return response
+	}
+
+	response.Message = "Tweet eliminated"
+	response.Status = 200
+	return response
+}

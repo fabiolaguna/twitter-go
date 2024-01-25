@@ -60,3 +60,18 @@ func GetTweets(id string, page int64) ([]*models.TweetsResponse, bool) {
 
 	return results, true
 }
+
+func DeleteTweet(id string, userId string) error {
+	ctx := context.TODO()
+	db := configurations.MongoConnection.Database(configurations.DatabaseName)
+	col := db.Collection("tweet")
+
+	objectId, _ := primitive.ObjectIDFromHex(id)
+	condition := bson.M{
+		"_id":    objectId,
+		"userid": userId,
+	}
+
+	_, err := col.DeleteOne(ctx, condition)
+	return err
+}
