@@ -53,6 +53,7 @@ func UploadImage(ctx context.Context, uploadType string, request events.APIGatew
 	}
 
 	if strings.HasPrefix(mediaType, "multipart/") {
+		fmt.Println("ESTE ES EL BODUYYYYYYYYYYYYYYYYYYY: " + request.Body)
 		body, err := base64.StdEncoding.DecodeString(request.Body)
 		if err != nil {
 			response.Message = "[image service][method:UploadImage] Error decoding string: " + err.Error()
