@@ -65,7 +65,7 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 func authorization(ctx context.Context, request events.APIGatewayProxyRequest) (bool, int, string, models.Claim) {
 	path := ctx.Value(models.Key("path")).(string)
 
-	if path == "register" || path == "login" || path == "avatar" || path == "banner" {
+	if path == "register" || path == "login" {
 		return true, 200, "", models.Claim{}
 	}
 
