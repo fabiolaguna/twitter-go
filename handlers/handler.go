@@ -32,6 +32,10 @@ func RequestHandlers(ctx context.Context, request events.APIGatewayProxyRequest)
 			return controllers.Login(ctx)
 		case "tweet":
 			return controllers.CreateTweet(ctx, claim)
+		case "avatar":
+			return controllers.UploadImage(ctx, "avatar", request, claim)
+		case "banner":
+			return controllers.UploadImage(ctx, "banner", request, claim)
 		}
 	case "GET":
 		switch ctx.Value(models.Key("path")).(string) {
