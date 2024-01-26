@@ -46,8 +46,6 @@ func UploadImage(ctx context.Context, uploadType string, request events.APIGatew
 		user.Banner = fileName
 	}
 
-	fmt.Println("FILENAMEEEEE: " + fileName)
-
 	mediaType, params, err := mime.ParseMediaType(request.Headers["Content-Type"])
 	if err != nil {
 		response.Message = "[image service][method:UploadImage] Error has occurred parsing header: " + err.Error()
