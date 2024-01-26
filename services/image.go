@@ -46,6 +46,8 @@ func UploadImage(ctx context.Context, uploadType string, request events.APIGatew
 		user.Banner = fileName
 	}
 
+	fmt.Println("FILENAMEEEEE: " + fileName)
+
 	mediaType, params, err := mime.ParseMediaType(request.Headers["Content-Type"])
 	if err != nil {
 		response.Message = "[image service][method:UploadImage] Error has occurred parsing header: " + err.Error()
@@ -54,14 +56,14 @@ func UploadImage(ctx context.Context, uploadType string, request events.APIGatew
 	}
 
 	if strings.HasPrefix(mediaType, "multipart/") {
-		body, err := base64.StdEncoding.Strict().DecodeString(request.Body)
+		body, err := base64.StdEncoding.DecodeString(request.Body)
 		if err != nil {
 			response.Message = "[image service][method:UploadImage] Error decoding string: " + err.Error()
 			fmt.Println(response.Message)
 			return response
 		}
 
-		mr := multipart.NewReader(bytes.NewReader([]byte(body)), params["boundary"])
+		mr := multipart.NewReader(bytes.NewReader(body), params["boundary"])
 		p, err := mr.NextPart()
 		if err != nil && err != io.EOF {
 			response.Message = "[image service][method:UploadImage] Error trying to access next part: " + err.Error()
